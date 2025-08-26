@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nishant Sakesh - Portfolio</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #121212;
+            color: #E0E0E0;
+            overflow-x: hidden;
+        }
+
+        .text-yellow-400-custom {
+            color: #FACC15;
+        }
+        
+        /* Custom styles to match the PDF's aesthetic, with smooth transitions */
+        .card {
+            background-color: #1a1a1a;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border-radius: 9999px;
+            font-weight: 600;
+            transition: transform 0.2s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-yellow {
+            background-color: #FACC15;
+            color: #121212;
+        }
+
+        .btn-yellow:hover {
+            background-color: #EAB308;
+            transform: scale(1.05);
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            border: 2px solid #E0E0E0;
+            color: #E0E0E0;
+        }
+
+        .btn-outline:hover {
+            background-color: rgba(224, 224, 224, 0.1);
+            transform: scale(1.05);
+        }
+        
+        /* Custom scroll animations */
+        .animate-on-scroll {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+
+        .animate-on-scroll.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .review-card {
+            border-left: 4px solid #FACC15;
+        }
+
+        .skill-badge {
+            background-color: #2a2a2a;
+            color: #FACC15;
+            padding: 8px 16px;
+            border-radius: 9999px;
+            font-weight: 500;
+            transition: background-color 0.2s ease;
+        }
+
+        .skill-badge:hover {
+            background-color: #FACC15;
+            color: #121212;
+        }
+
+        /* SVG icon styling for project cards */
+        .project-icon {
+            background-color: #FACC15;
+            padding: 12px;
+            border-radius: 9999px;
+            display: inline-block;
+            margin-bottom: 1.5rem;
+        }
+        
+    </style>
+</head>
+<body class="bg-[#121212] text-[#E0E0E0]">
+
+    <!-- Header / Navigation -->
+    <header class="fixed top-0 left-0 right-0 z-50 p-4 sm:p-6 flex justify-between items-center max-w-7xl mx-auto">
+        <div class="font-bold text-lg sm:text-xl text-white">Nishant Sakesh</div>
+        <button id="menu-btn" class="menu-btn p-2 rounded-full border border-gray-700 bg-[#1a1a1a] md:hidden">
+            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
+            </svg>
+        </button>
+        <nav id="nav-menu" class="hidden md:flex space-x-4 sm:space-x-8">
+            <a href="#summary" class="hover:text-yellow-400-custom transition">Summary</a>
+            <a href="#skills" class="hover:text-yellow-400-custom transition">Skills</a>
+            <a href="#projects" class="hover:text-yellow-400-custom transition">Projects</a>
+            <a href="#education" class="hover:text-yellow-400-custom transition">Education</a>
+            <a href="#contact" class="hover:text-yellow-400-custom transition">Contact</a>
+        </nav>
+    </header>
+
+    <!-- Mobile Menu -->
+    <div id="mobile-menu" class="fixed inset-0 z-40 bg-black bg-opacity-90 flex flex-col items-center justify-center space-y-8 hidden md:hidden transition-transform duration-300">
+        <a href="#summary" class="text-3xl text-white hover:text-yellow-400-custom transition">Summary</a>
+        <a href="#skills" class="text-3xl text-white hover:text-yellow-400-custom transition">Skills</a>
+        <a href="#projects" class="text-3xl text-white hover:text-yellow-400-custom transition">Projects</a>
+        <a href="#education" class="text-3xl text-white hover:text-yellow-400-custom transition">Education</a>
+        <a href="#contact" class="text-3xl text-white hover:text-yellow-400-custom transition">Contact</a>
+        <button id="close-menu-btn" class="absolute top-6 right-6 p-2 text-white">
+            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+        </button>
+    </div>
+
+    <main class="relative z-10 max-w-7xl mx-auto p-4 sm:p-6 md:p-12">
+
+        <!-- Hero Section -->
+        <section id="hero" class="h-screen flex flex-col justify-center items-center text-center">
+            <div class="animate-on-scroll">
+                <h1 class="text-5xl sm:text-6xl md:text-7xl font-bold leading-tight mb-4">
+                    Nishant <span class="text-yellow-400-custom">Sakesh</span>
+                </h1>
+                <p class="text-lg sm:text-xl md:text-2xl text-gray-400 mb-8 max-w-3xl mx-auto">
+                    DATA SCIENCE | MACHINE LEARNING
+                </p>
+                <a href="#contact" class="btn btn-yellow">
+                    Get in Touch
+                </a>
+            </div>
+        </section>
+
+        <!-- Dashboard / Summary Section -->
+        <section id="summary" class="py-16 md:py-24">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-center">
+                <div class="animate-on-scroll">
+                    <h2 class="text-3xl sm:text-4xl md:text-5xl font-bold mb-6">
+                        Highly analytical, results-driven <br> <span class="text-yellow-400-custom">Data Scientist</span>
+                    </h2>
+                    <p class="text-lg text-gray-400 leading-relaxed">
+                        With a robust foundation in Machine Learning, Deep Learning, and Statistical Analysis. Proven expertise in data preprocessing, feature engineering, and data visualization to translate complex datasets into actionable insights. Adept at developing and deploying robust predictive models and interactive web applications using Python and its extensive ecosystem. Seeking to leverage advanced analytical techniques and problem-solving abilities to drive data-informed decision-making and contribute to innovative data science initiatives.
+                    </p>
+                </div>
+                <!-- This is the dashboard-like section adapted for a portfolio -->
+                <div class="grid grid-cols-2 gap-4 animate-on-scroll md:scale-95 lg:scale-100">
+                    <div class="card p-6 sm:p-8">
+                        <div class="text-2xl sm:text-3xl font-bold text-yellow-400-custom mb-2">3+</div>
+                        <p class="text-gray-400">Major Projects</p>
+                    </div>
+                    <div class="card p-6 sm:p-8">
+                        <div class="text-2xl sm:text-3xl font-bold text-yellow-400-custom mb-2">7.5</div>
+                        <p class="text-gray-400">GPA (B.Tech)</p>
+                    </div>
+                    <div class="card p-6 sm:p-8 col-span-2">
+                        <div class="text-2xl sm:text-3xl font-bold text-yellow-400-custom mb-2">15-20%</div>
+                        <p class="text-gray-400">Potential Churn Reduction (Project)</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Skills Section (Re-imagined from Features section) -->
+        <section id="skills" class="py-16 md:py-24">
+            <div class="animate-on-scroll text-center mb-12">
+                <h2 class="text-3xl sm:text-4xl md:text-5xl font-bold mb-4">
+                    My Core <span class="text-yellow-400-custom">Expertise</span>
+                </h2>
+                <p class="text-lg text-gray-400 max-w-2xl mx-auto">
+                    Adept at transforming complex data into clear, actionable insights and robust applications.
+                </p>
+            </div>
+            <!-- Skills as badges -->
+            <div class="flex flex-wrap justify-center gap-4 animate-on-scroll">
+                <div class="skill-badge">Python</div>
+                <div class="skill-badge">Pandas</div>
+                <div class="skill-badge">NumPy</div>
+                <div class="skill-badge">Matplotlib</div>
+                <div class="skill-badge">Seaborn</div>
+                <div class="skill-badge">Scikit-learn</div>
+                <div class="skill-badge">Plotly</div>
+                <div class="skill-badge">PyTorch</div>
+                <div class="skill-badge">Jupyter Notebooks</div>
+                <div class="skill-badge">GitHub</div>
+                <div class="skill-badge">Streamlit</div>
+                <div class="skill-badge">SQL</div>
+                <div class="skill-badge">Deep Learning</div>
+                <div class="skill-badge">Data Cleaning</div>
+                <div class="skill-badge">EDA</div>
+                <div class="skill-badge">Model Evaluation</div>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 mt-12">
+                <div class="card p-6 sm:p-8 animate-on-scroll">
+                    <h3 class="text-xl sm:text-2xl font-bold mb-4">
+                        <span class="text-yellow-400-custom">01.</span> Clean Data Architecture
+                    </h3>
+                    <p class="text-gray-400 leading-relaxed">
+                        I specialize in creating end-to-end data analysis pipelines, including data cleaning, preprocessing, and feature engineering to ensure data integrity and model performance.
+                    </p>
+                </div>
+                <div class="card p-6 sm:p-8 animate-on-scroll">
+                    <h3 class="text-xl sm:text-2xl font-bold mb-4">
+                        <span class="text-yellow-400-custom">02.</span> Intuitive Visualizations
+                    </h3>
+                    <p class="text-gray-400 leading-relaxed">
+                        I develop interactive web applications and dashboards using tools like Streamlit and Plotly to visualize sales trends, product performance, and other key metrics.
+                    </p>
+                </div>
+                <div class="card p-6 sm:p-8 animate-on-scroll">
+                    <h3 class="text-xl sm:text-2xl font-bold mb-4">
+                        <span class="text-yellow-400-custom">03.</span> Advanced Predictive Modeling
+                    </h3>
+                    <p class="text-gray-400 leading-relaxed">
+                        Expertise in applying machine learning algorithms (Linear/Logistic Regression, Random Forest) and deep learning to solve problems like customer churn prediction and house price forecasting.
+                    </p>
+                </div>
+                <div class="card p-6 sm:p-8 animate-on-scroll">
+                    <h3 class="text-xl sm:text-2xl font-bold mb-4">
+                        <span class="text-yellow-400-custom">04.</span> Actionable Insights
+                    </h3>
+                    <p class="text-gray-400 leading-relaxed">
+                        My work is focused on translating complex data analysis into clear, actionable insights that drive data-informed decision-making and business growth.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Projects Section -->
+        <section id="projects" class="py-16 md:py-24">
+            <div class="animate-on-scroll text-center mb-12">
+                <h2 class="text-3xl sm:text-4xl md:text-5xl font-bold mb-4">
+                    Featured <span class="text-yellow-400-custom">Projects</span>
+                </h2>
+                <p class="text-lg text-gray-400 max-w-2xl mx-auto">
+                    A showcase of my recent work, from predictive models to interactive web applications.
+                </p>
+            </div>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12">
+                <!-- Project Card 1: Customer Churn Prediction -->
+                <div class="card p-6 sm:p-8 animate-on-scroll">
+                    <div class="project-icon">
+                        <svg class="w-8 h-8 text-[#121212]" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl sm:text-2xl font-bold mb-4">Customer Churn Prediction & Retention Strategy</h3>
+                    <p class="text-gray-400 leading-relaxed mb-4">
+                        Developed and deployed a machine learning model to predict customer churn likelihood, identifying key drivers to reduce churn by an estimated 15-20% and enhance Customer Lifetime Value.
+                    </p>
+                    <div class="flex items-center space-x-2 text-sm text-yellow-400-custom mb-4">
+                        <span class="font-semibold">Tools:</span> Python, Pandas, Matplotlib, Scikit-learn
+                    </div>
+                    <a href="https://coustomerchurnmlapp-9id7wuv9eyc2kz7h8jkdyz.streamlit.app/" target="_blank" class="btn btn-outline text-sm">
+                        View App
+                    </a>
+                </div>
+                <!-- Project Card 2: Supplement Sales Performance -->
+                <div class="card p-6 sm:p-8 animate-on-scroll">
+                    <div class="project-icon">
+                        <svg class="w-8 h-8 text-[#121212]" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl sm:text-2xl font-bold mb-4">Supplement Sales Performance Analysis & Optimization</h3>
+                    <p class="text-gray-400 leading-relaxed mb-4">
+                        Engineered an end-to-end data analysis pipeline and developed an interactive web application using Streamlit and Plotly to visualize sales trends and provide clear insights for optimizing inventory.
+                    </p>
+                    <div class="flex items-center space-x-2 text-sm text-yellow-400-custom mb-4">
+                        <span class="font-semibold">Tools:</span> Python, Streamlit, Plotly, PyTorch
+                    </div>
+                    <a href="https://supplementsalesdataapp-fmhdpj5qpjypncr4oq5tkc.streamlit.app/" target="_blank" class="btn btn-outline text-sm">
+                        View App
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Education Section -->
+        <section id="education" class="py-16 md:py-24">
+            <div class="animate-on-scroll text-center mb-12">
+                <h2 class="text-3xl sm:text-4xl md:text-5xl font-bold mb-4">
+                    My <span class="text-yellow-400-custom">Education</span>
+                </h2>
+                <p class="text-lg text-gray-400 max-w-2xl mx-auto">
+                    Academic foundation that has shaped my skills and knowledge in the field of data science.
+                </p>
+            </div>
+            <div class="card p-6 sm:p-8 max-w-3xl mx-auto animate-on-scroll">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-2">
+                    <h3 class="text-xl sm:text-2xl font-bold">
+                        Bachelor of Technology in Computer Science Engineering
+                    </h3>
+                    <span class="text-gray-400 mt-1 sm:mt-0">2021 - 2025</span>
+                </div>
+                <p class="text-gray-400 text-lg mb-2">BHILAI INSTITUTE OF TECHNOLOGY, RAIPUR</p>
+                <p class="text-sm text-gray-500">GPA: 7.5</p>
+            </div>
+        </section>
+
+        <!-- Contact Section (re-imagined from the "Any questions?" and "Let's talk" sections) -->
+        <section id="contact" class="py-16 md:py-24">
+            <div class="animate-on-scroll text-center mb-12">
+                <h2 class="text-3xl sm:text-4xl md:text-5xl font-bold mb-4">
+                    Let's <span class="text-yellow-400-custom">Connect</span>
+                </h2>
+                <p class="text-lg text-gray-400 max-w-2xl mx-auto">
+                    Feel free to reach out to discuss potential projects, collaborations, or just to say hi!
+                </p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
+                <div class="card p-6 sm:p-8 animate-on-scroll">
+                    <h3 class="text-2xl font-semibold mb-4">Contact Details</h3>
+                    <p class="text-gray-400 mb-2">+918319560614</p>
+                    <p class="text-gray-400 mb-2">nishantsakesh@gmail.com</p>
+                    <a href="https://linkedin.com/in/nishantsakesh" target="_blank" class="text-yellow-400-custom hover:underline">
+                        linkedin.com/in/nishantsakesh
+                    </a>
+                </div>
+                <div class="card p-6 sm:p-8 animate-on-scroll">
+                    <h3 class="text-2xl font-semibold mb-4">Follow Me</h3>
+                    <p class="text-gray-400 mb-2">Connect with me on social media to see my latest work and insights.</p>
+                    <div class="mt-4">
+                         <a href="https://github.com/nishantsakesh" target="_blank" class="btn btn-outline mr-2 text-sm">
+                            GitHub
+                        </a>
+                        <a href="https://linkedin.com/in/nishantsakesh" target="_blank" class="btn btn-outline text-sm">
+                            LinkedIn
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="text-center text-gray-500 py-8 text-sm">
+        Made by Nishant Sakesh
+    </footer>
+
+    <script>
+        // Smooth scrolling for navigation
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+                // Close mobile menu after clicking a link
+                document.getElementById('mobile-menu').classList.add('hidden');
+            });
+        });
+
+        // Mobile menu toggle
+        const menuBtn = document.getElementById('menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const closeMenuBtn = document.getElementById('close-menu-btn');
+
+        menuBtn.addEventListener('click', () => {
+            mobileMenu.classList.remove('hidden');
+        });
+
+        closeMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.add('hidden');
+        });
+
+        // Intersection Observer for scroll animations
+        const observerOptions = {
+            root: null,
+            rootMargin: '0px',
+            threshold: 0.2 // Trigger when 20% of the item is visible
+        };
+
+        const observer = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.animate-on-scroll').forEach(element => {
+            observer.observe(element);
+        });
+    </script>
+</body>
+</html>
