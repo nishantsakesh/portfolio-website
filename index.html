@@ -1,410 +1,721 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nishant Sakesh - Portfolio</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #121212;
-            color: #E0E0E0;
-            overflow-x: hidden;
-        }
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Nishant Sakesh — Data Scientist — 3D Portfolio</title>
+  <meta name="description" content="Nishant Sakesh — Data Scientist. An interactive 3D portfolio with cinematic storytelling, polished motion, and interactive case studies." />
+  <meta name="author" content="Nishant Sakesh" />
+  <meta name="theme-color" content="#F8F9FA" />
 
-        .text-yellow-400-custom {
-            color: #FACC15;
-        }
-        
-        /* Custom styles to match the PDF's aesthetic, with smooth transitions */
-        .card {
-            background-color: #1a1a1a;
-            border-radius: 12px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.gstatic" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2);
-        }
+  <!-- Tailwind (CDN) -->
+  <script src="https://cdn.tailwindcss.com"></script>
 
-        .btn {
-            padding: 12px 24px;
-            border-radius: 9999px;
-            font-weight: 600;
-            transition: transform 0.2s ease;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
+  <!-- GSAP + ScrollTrigger -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" defer></script>
 
-        .btn-yellow {
-            background-color: #FACC15;
-            color: #121212;
-        }
+  <!-- Lenis smooth scrolling -->
+  <script src="https://cdn.jsdelivr.net/npm/@studio-freight/lenis@1.0.27/bundled/lenis.min.js" defer></script>
 
-        .btn-yellow:hover {
-            background-color: #EAB308;
-            transform: scale(1.05);
-        }
+  <!-- Three.js (light weight usage) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r146/three.min.js" defer></script>
 
-        .btn-outline {
-            background-color: transparent;
-            border: 2px solid #E0E0E0;
-            color: #E0E0E0;
-        }
+  <!-- Chart.js for case-study charts -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js" defer></script>
 
-        .btn-outline:hover {
-            background-color: rgba(224, 224, 224, 0.1);
-            transform: scale(1.05);
-        }
-        
-        /* Custom scroll animations */
-        .animate-on-scroll {
-            opacity: 0;
-            transform: translateY(20px);
-            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
-        }
+  <!-- html2canvas & jsPDF for exporting CV -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" defer></script>
 
-        .animate-on-scroll.visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
+  <style>
+    :root{
+      --bg: #F8F9FA;
+      --surface: #FFFFFF;
+      --accent: #ffb703;      /* Richer yellow */
+      --accent-dark: #fb8500;   /* Orange accent for hover */
+      --muted: #6c757d;       /* Softer gray */
+      --text: #212529;        /* Dark, not pure black */
+      --border: rgba(0,0,0,0.08);
+      --shadow: 0 10px 30px -15px rgba(0,0,0,0.1);
+      --shadow-lg: 0 20px 40px -15px rgba(0,0,0,0.15);
+      --success: #2a9d8f;
+      --danger: #e76f51;
+    }
+    html,body{height:100%}
+    body.mobile-menu-open {
+        overflow: hidden;
+    }
+    body{
+      font-family: 'Inter', sans-serif;
+      background:var(--bg); color:var(--text);
+      -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
+      margin:0; overflow-x:hidden;
+    }
 
-        .review-card {
-            border-left: 4px solid #FACC15;
-        }
+    /* Layout & Helpers */
+    .container{ max-width:1140px; margin:0 auto; padding:0 1.5rem; }
+    .glass-card{ background:rgba(255,255,255,0.7); border:1px solid var(--border); box-shadow:var(--shadow); border-radius:16px; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
+    .section-title{ font-size:2rem; font-weight:800; margin-bottom:24px; }
+    .skip-link{ position:absolute; left:-999px; top:auto; width:1px; height:1px; overflow:hidden; z-index:9999; }
+    .skip-link:focus{ left:1rem; top:1rem; width:auto; height:auto; padding:.5rem 1rem; background:var(--surface); color:var(--text); border-radius:8px; }
 
-        .skill-badge {
-            background-color: #2a2a2a;
-            color: #FACC15;
-            padding: 8px 16px;
-            border-radius: 9999px;
-            font-weight: 500;
-            transition: background-color 0.2s ease;
-        }
+    /* Preloader */
+    #preloader{ position:fixed; inset:0; display:flex; align-items:center; justify-content:center; flex-direction:column; gap:1rem; background:var(--bg); z-index:3000; }
+    #preloader .bar{ width:280px; height:4px; background:rgba(0,0,0,0.06); border-radius:4px; overflow:hidden; }
+    #preloader .bar > i{ display:block; height:100%; width:0%; background:linear-gradient(90deg,var(--accent),var(--accent-dark)); }
 
-        .skill-badge:hover {
-            background-color: #FACC15;
-            color: #121212;
-        }
+    /* Header */
+    header{ position:fixed; left:0; right:0; top:20px; z-index:1200; transform: translateY(-100px); opacity: 0; }
+    .header-inner{ display:flex; justify-content:space-between; align-items:center; gap:16px; padding:12px 20px; }
+    .brand{ display:flex; gap:12px; align-items:center; }
+    .logo { width:40px; height:40px; border-radius:10px; background:linear-gradient(45deg,var(--accent),var(--accent-dark)); color:#fff; display:flex; align-items:center; justify-content:center; font-weight:700; font-size: 0.9rem; }
 
-        /* SVG icon styling for project cards */
-        .project-icon {
-            background-color: #FACC15;
-            padding: 12px;
-            border-radius: 9999px;
-            display: inline-block;
-            margin-bottom: 1.5rem;
-        }
-        
-    </style>
+    /* Buttons */
+    .btn{
+        display: inline-block; padding: 10px 20px; border-radius: 10px; font-weight: 600;
+        font-size: 0.9rem; border: 1px solid transparent; transition: all 0.25s ease;
+        text-decoration: none; color: var(--text); background: var(--surface);
+        border-color: var(--border); box-shadow: var(--shadow); cursor: pointer;
+    }
+    .btn:hover{ transform: translateY(-3px); box-shadow: var(--shadow-lg); }
+    .btn.primary{ background: var(--accent); color:#fff; border-color:transparent; }
+    .btn.primary:hover{ background: var(--accent-dark); }
+
+    /* Cursor */
+    .cursor{ position:fixed; left:0; top:0; width:16px; height:16px; border-radius:50%; transform:translate(-50%,-50%); border:2px solid var(--text); pointer-events:none; transition: all .15s ease; z-index:4000; mix-blend-mode:difference; }
+    .cursor.hover{ transform:translate(-50%,-50%) scale(2.5); background:var(--surface); border-color:transparent; }
+
+    /* Hero */
+    #hero{ min-height:100vh; display:flex; align-items:center; padding:8rem 0; position:relative; overflow:hidden; perspective: 1500px; }
+    #hero .left{ max-width:680px; z-index:6; will-change: transform; }
+    #hero .eyebrow{ color:var(--muted); margin-bottom:12px; font-weight:600; }
+    #hero h1{ font-size:clamp(2.5rem, 6vw, 4.5rem); line-height:1.1; margin:0; letter-spacing:-1.5px; font-weight:800; }
+    #hero .lead{ margin-top:24px; color:var(--muted); font-size:1.1rem; line-height: 1.6; max-width:55ch; }
+    .hero-cta{ margin-top:32px; display:flex; gap:16px; align-items:center; }
+    #heroCanvas{ position:absolute; inset:0; z-index:0; pointer-events:none; }
+
+    /* Sticker pack */
+    .sticker{ position:absolute; z-index:4; pointer-events:auto; will-change:transform; }
+    .sticker svg{ display:block; width:80px; height:80px; filter: drop-shadow(0 10px 15px rgba(0,0,0,0.07)); }
+
+    /* Story Section */
+    #story{ position:relative; height: 400vh; }
+    .story-container { position: sticky; top: 0; height: 100vh; overflow: hidden; }
+    .story-scene{ 
+        height: 100vh; 
+        width: 100%;
+        position: absolute; 
+        top: 0;
+        left: 0;
+        display:flex; 
+        align-items:center; 
+        justify-content: center;
+        opacity: 0;
+        visibility: hidden;
+    }
+    .story-scene-inner{ width: 100%; max-width:1140px; margin:0 auto; padding:4rem 20px; display:flex; gap:50px; align-items:center; text-align: left; }
+    .story-scene .text{ flex:1; z-index:8; }
+    .story-scene .visual{ width:500px; height: 400px; flex-shrink:0; position:relative; }
+    .story-title{ font-size:2.2rem; font-weight:800; margin-bottom:12px; line-height:1.2; }
+    .story-sub{ color:var(--muted); font-size:1.05rem; line-height:1.6; }
+    .story-kpi { font-size: 3rem; font-weight: 800; color: var(--danger); }
+
+    /* Projects - 3D Card Update */
+    #projects, #skills, #journey, #contact { padding:7rem 0; }
+    .projects-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:32px; }
+    .project {
+        perspective: 1000px;
+    }
+    .project-content {
+        padding:24px;
+        transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.4s ease;
+        display:flex; flex-direction:column; justify-content:space-between;
+        will-change: transform, box-shadow;
+        height: 100%;
+        position: relative;
+        overflow: hidden;
+    }
+    .project-content:hover {
+        box-shadow: var(--shadow-lg), 0 0 30px rgba(255, 183, 3, 0.3);
+    }
+    .project h4{ font-size:1.2rem; font-weight:700; margin:0; }
+    .project p{ color:var(--muted); margin-top:10px; font-size:.95rem; line-height:1.6; flex-grow: 1; }
+    .project-footer { margin-top:24px; display:flex; gap:10px; align-items:center; justify-content:flex-end; }
+    .project-glow {
+        position: absolute;
+        top: 0; left: 0;
+        width: 150px; height: 150px;
+        background: radial-gradient(circle at center, rgba(255, 183, 3, 0.2) 0%, rgba(255, 183, 3, 0) 70%);
+        pointer-events: none;
+        transition: transform 0.1s ease-out, opacity 0.4s ease;
+        opacity: 0;
+        will-change: transform, opacity;
+    }
+    .project:hover .project-glow {
+        opacity: 1;
+    }
+
+    /* Workflow Section */
+    .workflow-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 32px;
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 32px;
+        background: var(--surface);
+    }
+    .workflow-stage { padding: 24px; text-align: center; }
+    .workflow-stage h3 { font-size: 1.25rem; font-weight: 700; margin-top: 16px; }
+    .workflow-stage p { font-size: 0.95rem; color: var(--muted); margin-top: 8px; }
+    .workflow-icon {
+        width: 64px; height: 64px; margin: 0 auto; background: linear-gradient(45deg, var(--accent), var(--accent-dark));
+        border-radius: 16px; display: flex; align-items: center; justify-content: center; color: white;
+    }
+
+    /* Journey */
+    #journey .timeline{ border-left:2px solid var(--border); padding-left:24px; margin-top:16px; }
+    #journey .event{ position:relative; margin-bottom:32px; padding-left:16px; }
+    #journey .event::before{ content:''; position:absolute; left:-34px; top:5px; width:12px; height:12px; border-radius:50%; background:var(--accent); border: 2px solid var(--surface); }
+
+    /* Contact */
+    .contact-form{ padding:20px; display:flex; flex-direction:column; gap:12px; }
+    .form-input { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid var(--border); background: var(--bg); transition: all .2s ease; }
+    .form-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(255,183,3,0.2); outline: none; }
+
+    /* Modal */
+    .modal-wrap{ position:fixed; inset:0; display:flex; align-items:center; justify-content:center; z-index:5000; opacity:0; pointer-events:none; transition:opacity 0.3s ease; }
+    .modal-wrap.active { opacity:1; pointer-events:auto; }
+    .modal-backdrop{ position:absolute; inset:0; background:rgba(10,10,10,0.4); backdrop-filter:blur(4px); }
+    .modal{ position:relative; z-index:10; width:min(900px,94%); max-height:90vh; overflow-y:auto; padding:24px; transform: scale(0.95); transition: transform 0.3s ease; }
+    .modal-wrap.active .modal { transform: scale(1); }
+
+    /* Footer */
+    footer{ padding:4rem 0; color:var(--muted); text-align:center; }
+
+    /* Responsive */
+    @media (max-width: 1000px){
+      .projects-grid, .workflow-grid { grid-template-columns:repeat(2,1fr); }
+      .story-scene-inner{ flex-direction:column; text-align:center; }
+      .story-scene .visual { margin-top:2rem; width:100%; max-width:400px; }
+    }
+    @media (max-width:767px){
+      .projects-grid, .workflow-grid { grid-template-columns:1fr; }
+      header { top: 10px; }
+      .header-inner { padding: 8px 12px; }
+    }
+
+    /* Reduced motion respect */
+    @media (prefers-reduced-motion: reduce){
+      * { transition: none !important; animation: none !important; }
+    }
+  </style>
 </head>
-<body class="bg-[#121212] text-[#E0E0E0]">
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
 
-    <!-- Header / Navigation -->
-    <header class="fixed top-0 left-0 right-0 z-50 p-4 sm:p-6 flex justify-between items-center max-w-7xl mx-auto">
-        <div class="font-bold text-lg sm:text-xl text-white">Nishant Sakesh</div>
-        <button id="menu-btn" class="menu-btn p-2 rounded-full border border-gray-700 bg-[#1a1a1a] md:hidden">
-            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
-            </svg>
-        </button>
-        <nav id="nav-menu" class="hidden md:flex space-x-4 sm:space-x-8">
-            <a href="#summary" class="hover:text-yellow-400-custom transition">Summary</a>
-            <a href="#skills" class="hover:text-yellow-400-custom transition">Skills</a>
-            <a href="#projects" class="hover:text-yellow-400-custom transition">Projects</a>
-            <a href="#education" class="hover:text-yellow-400-custom transition">Education</a>
-            <a href="#contact" class="hover:text-yellow-400-custom transition">Contact</a>
-        </nav>
-    </header>
+  <div id="preloader" role="status">
+    <div style="font-weight:700;font-size:1.1rem;color:var(--text)">Nishant Sakesh</div>
+    <div class="bar"><i id="preloadBar"></i></div>
+  </div>
 
-    <!-- Mobile Menu -->
-    <div id="mobile-menu" class="fixed inset-0 z-40 bg-black bg-opacity-90 flex flex-col items-center justify-center space-y-8 hidden md:hidden transition-transform duration-300">
-        <a href="#summary" class="text-3xl text-white hover:text-yellow-400-custom transition">Summary</a>
-        <a href="#skills" class="text-3xl text-white hover:text-yellow-400-custom transition">Skills</a>
-        <a href="#projects" class="text-3xl text-white hover:text-yellow-400-custom transition">Projects</a>
-        <a href="#education" class="text-3xl text-white hover:text-yellow-400-custom transition">Education</a>
-        <a href="#contact" class="text-3xl text-white hover:text-yellow-400-custom transition">Contact</a>
-        <button id="close-menu-btn" class="absolute top-6 right-6 p-2 text-white">
-            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-            </svg>
+  <div id="cursor" class="cursor" aria-hidden="true"></div>
+
+  <header class="container" id="header">
+    <div class="header-inner glass-card">
+    <a href="#" class="brand" style="text-decoration:none; color:inherit;">
+      <div class="logo" aria-hidden="true">NS</div>
+      <div>
+        <div style="font-weight:700">Nishant Sakesh</div>
+        <div style="font-size:.8rem;color:var(--muted)">Data Scientist</div>
+      </div>
+    </a>
+
+    <!-- Desktop Navigation -->
+    <nav class="hidden md:flex gap-3 items-center">
+      <a href="#story" class="btn" data-cursor>My Process</a>
+      <a href="#projects" class="btn" data-cursor>Work</a>
+      <button id="downloadCV" class="btn primary" data-cursor aria-label="Download CV">Download CV</button>
+    </nav>
+    
+    <!-- Mobile Menu Button -->
+    <div class="md:hidden">
+        <button id="mobile-menu-btn" aria-label="Open menu" class="p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-inset focus:ring-accent">
+            <svg id="hamburger-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+            <svg id="close-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="hidden"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
         </button>
     </div>
 
-    <main class="relative z-10 max-w-7xl mx-auto p-4 sm:p-6 md:p-12">
+    </div>
+  </header>
+  
+  <!-- Mobile Menu Overlay -->
+  <div id="mobile-menu" class="fixed inset-0 z-40" style="visibility: hidden; opacity: 0;">
+      <div class="absolute inset-0 bg-white/90 backdrop-blur-md"></div>
+      <nav class="relative z-10 flex flex-col items-center justify-center h-full gap-8 text-center">
+         <a href="#story" class="mobile-nav-link text-2xl font-bold">My Process</a>
+         <a href="#projects" class="mobile-nav-link text-2xl font-bold">Work</a>
+         <a href="#skills" class="mobile-nav-link text-2xl font-bold">My Workflow</a>
+         <a href="#contact" class="mobile-nav-link text-2xl font-bold">Contact</a>
+         <button id="mobile-download-cv" class="btn primary mt-4">Download CV</button>
+      </nav>
+  </div>
 
-        <!-- Hero Section -->
-        <section id="hero" class="h-screen flex flex-col justify-center items-center text-center">
-            <div class="animate-on-scroll">
-                <h1 class="text-5xl sm:text-6xl md:text-7xl font-bold leading-tight mb-4">
-                    Nishant <span class="text-yellow-400-custom">Sakesh</span>
-                </h1>
-                <p class="text-lg sm:text-xl md:text-2xl text-gray-400 mb-8 max-w-3xl mx-auto">
-                    DATA SCIENCE | MACHINE LEARNING
-                </p>
-                <a href="#contact" class="btn btn-yellow">
-                    Get in Touch
-                </a>
-            </div>
-        </section>
 
-        <!-- Dashboard / Summary Section -->
-        <section id="summary" class="py-16 md:py-24">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-center">
-                <div class="animate-on-scroll">
-                    <h2 class="text-3xl sm:text-4xl md:text-5xl font-bold mb-6">
-                        Highly analytical, results-driven <br> <span class="text-yellow-400-custom">Data Scientist</span>
-                    </h2>
-                    <p class="text-lg text-gray-400 leading-relaxed">
-                        With a robust foundation in Machine Learning, Deep Learning, and Statistical Analysis. Proven expertise in data preprocessing, feature engineering, and data visualization to translate complex datasets into actionable insights. Adept at developing and deploying robust predictive models and interactive web applications using Python and its extensive ecosystem. Seeking to leverage advanced analytical techniques and problem-solving abilities to drive data-informed decision-making and contribute to innovative data science initiatives.
-                    </p>
-                </div>
-                <!-- This is the dashboard-like section adapted for a portfolio -->
-                <div class="grid grid-cols-2 gap-4 animate-on-scroll md:scale-95 lg:scale-100">
-                    <div class="card p-6 sm:p-8">
-                        <div class="text-2xl sm:text-3xl font-bold text-yellow-400-custom mb-2">3+</div>
-                        <p class="text-gray-400">Major Projects</p>
+  <main id="main" tabindex="-1">
+    <section id="hero" class="container">
+      <div class="left">
+        <div class="eyebrow" data-anim="hero">Hello, I'm Nishant.</div>
+        <h1 data-anim="hero">Architect of Actionable Insights.</h1>
+        <p class="lead" data-anim="hero">
+          I transform complex data into clear, meaningful products. I design reproducible pipelines, build interpretable models, and ship lightweight tools that help teams make better decisions, fast.
+        </p>
+        <div class="hero-cta" data-anim="hero">
+          <a href="#story" class="btn primary" data-cursor>See My Process</a>
+          <a href="#projects" class="btn" data-cursor>Explore Work</a>
+        </div>
+      </div>
+
+      <canvas id="heroCanvas" aria-hidden="true"></canvas>
+
+      <div class="sticker" id="sticker-data" style="left:10%; top:20%;">
+        <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect x="6" y="10" width="52" height="44" rx="8" fill="#fff" /><g transform="translate(16,20)"><rect x="0" y="8" width="8" height="18" rx="3" fill="#FFC700"></rect><rect x="12" y="2" width="8" height="24" rx="3" fill="#FFB84D"></rect><rect x="24" y="12" width="8" height="14" rx="3" fill="#FFD88A"></rect></g></svg>
+      </div>
+
+      <div class="sticker" id="sticker-robot" style="right:10%; top:25%;">
+        <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect x="12" y="16" width="40" height="32" rx="8" fill="#fff" /><circle cx="26" cy="28" r="4" fill="#FFC700"/><circle cx="38" cy="28" r="4" fill="#FFB84D"/><rect x="24" y="38" width="16" height="4" rx="2" fill="#E9ECEF" /></svg>
+      </div>
+    </section>
+
+    <!-- HR Analytics Story Section -->
+    <section id="story" aria-label="My Data-to-Impact Process">
+        <div class="story-container">
+            <!-- Scene 1: The Problem -->
+            <div id="story-scene-1" class="story-scene">
+                <div class="story-scene-inner">
+                    <div class="text">
+                        <div class="story-title">Example Project: The Problem of Employee Attrition</div>
+                        <div class="story-sub">A major tech company was losing valuable talent, with a costly **16%** annual attrition rate. The core question was: "Why are our best people leaving, and can we predict who is at risk?"</div>
                     </div>
-                    <div class="card p-6 sm:p-8">
-                        <div class="text-2xl sm:text-3xl font-bold text-yellow-400-custom mb-2">7.5</div>
-                        <p class="text-gray-400">GPA (B.Tech)</p>
-                    </div>
-                    <div class="card p-6 sm:p-8 col-span-2">
-                        <div class="text-2xl sm:text-3xl font-bold text-yellow-400-custom mb-2">15-20%</div>
-                        <p class="text-gray-400">Potential Churn Reduction (Project)</p>
+                    <div class="visual">
+                        <svg viewBox="0 0 500 400" id="scene1-svg"></svg>
                     </div>
                 </div>
             </div>
-        </section>
-
-        <!-- Skills Section (Re-imagined from Features section) -->
-        <section id="skills" class="py-16 md:py-24">
-            <div class="animate-on-scroll text-center mb-12">
-                <h2 class="text-3xl sm:text-4xl md:text-5xl font-bold mb-4">
-                    My Core <span class="text-yellow-400-custom">Expertise</span>
-                </h2>
-                <p class="text-lg text-gray-400 max-w-2xl mx-auto">
-                    Adept at transforming complex data into clear, actionable insights and robust applications.
-                </p>
-            </div>
-            <!-- Skills as badges -->
-            <div class="flex flex-wrap justify-center gap-4 animate-on-scroll">
-                <div class="skill-badge">Python</div>
-                <div class="skill-badge">Pandas</div>
-                <div class="skill-badge">NumPy</div>
-                <div class="skill-badge">Matplotlib</div>
-                <div class="skill-badge">Seaborn</div>
-                <div class="skill-badge">Scikit-learn</div>
-                <div class="skill-badge">Plotly</div>
-                <div class="skill-badge">PyTorch</div>
-                <div class="skill-badge">Jupyter Notebooks</div>
-                <div class="skill-badge">GitHub</div>
-                <div class="skill-badge">Streamlit</div>
-                <div class="skill-badge">SQL</div>
-                <div class="skill-badge">Deep Learning</div>
-                <div class="skill-badge">Data Cleaning</div>
-                <div class="skill-badge">EDA</div>
-                <div class="skill-badge">Model Evaluation</div>
-            </div>
-            
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 mt-12">
-                <div class="card p-6 sm:p-8 animate-on-scroll">
-                    <h3 class="text-xl sm:text-2xl font-bold mb-4">
-                        <span class="text-yellow-400-custom">01.</span> Clean Data Architecture
-                    </h3>
-                    <p class="text-gray-400 leading-relaxed">
-                        I specialize in creating end-to-end data analysis pipelines, including data cleaning, preprocessing, and feature engineering to ensure data integrity and model performance.
-                    </p>
-                </div>
-                <div class="card p-6 sm:p-8 animate-on-scroll">
-                    <h3 class="text-xl sm:text-2xl font-bold mb-4">
-                        <span class="text-yellow-400-custom">02.</span> Intuitive Visualizations
-                    </h3>
-                    <p class="text-gray-400 leading-relaxed">
-                        I develop interactive web applications and dashboards using tools like Streamlit and Plotly to visualize sales trends, product performance, and other key metrics.
-                    </p>
-                </div>
-                <div class="card p-6 sm:p-8 animate-on-scroll">
-                    <h3 class="text-xl sm:text-2xl font-bold mb-4">
-                        <span class="text-yellow-400-custom">03.</span> Advanced Predictive Modeling
-                    </h3>
-                    <p class="text-gray-400 leading-relaxed">
-                        Expertise in applying machine learning algorithms (Linear/Logistic Regression, Random Forest) and deep learning to solve problems like customer churn prediction and house price forecasting.
-                    </p>
-                </div>
-                <div class="card p-6 sm:p-8 animate-on-scroll">
-                    <h3 class="text-xl sm:text-2xl font-bold mb-4">
-                        <span class="text-yellow-400-custom">04.</span> Actionable Insights
-                    </h3>
-                    <p class="text-gray-400 leading-relaxed">
-                        My work is focused on translating complex data analysis into clear, actionable insights that drive data-informed decision-making and business growth.
-                    </p>
+            <!-- Scene 2: The Process -->
+            <div id="story-scene-2" class="story-scene">
+                <div class="story-scene-inner">
+                    <div class="text">
+                        <div class="story-title">The Process: Uncovering Signals</div>
+                        <div class="story-sub">I built a pipeline to analyze their HR dataset. By cleaning the data, engineering features like 'YearsSinceLastPromotion', and performing EDA, I began to isolate the key factors driving attrition.</div>
+                    </div>
+                    <div class="visual">
+                        <svg viewBox="0 0 500 400" id="scene2-svg"><defs><linearGradient id="pipeGradient" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" style="stop-color:var(--accent); stop-opacity:1" /><stop offset="100%" style="stop-color:var(--accent-dark); stop-opacity:1" /></linearGradient></defs><g class="pipeline-group" style="opacity:0; transform: translateX(-50px);"><rect x="50" y="180" width="80" height="40" rx="8" fill="#E9ECEF"/><text x="90" y="205" text-anchor="middle" font-size="12" font-weight="600">HR Data</text><path d="M130 200 L 180 200" stroke="#CED4DA" stroke-width="2" /><rect x="180" y="180" width="100" height="40" rx="8" fill="url(#pipeGradient)"/><text x="230" y="205" text-anchor="middle" font-size="12" font-weight="600" fill="white">My Pipeline</text><path d="M280 200 L 330 200" stroke="#CED4DA" stroke-width="2" /><rect x="330" y="180" width="120" height="40" rx="8" fill="var(--success)"/><text x="390" y="205" text-anchor="middle" font-size="12" font-weight="600" fill="white">Key Factors</text></g></svg>
+                    </div>
                 </div>
             </div>
-        </section>
-
-        <!-- Projects Section -->
-        <section id="projects" class="py-16 md:py-24">
-            <div class="animate-on-scroll text-center mb-12">
-                <h2 class="text-3xl sm:text-4xl md:text-5xl font-bold mb-4">
-                    Featured <span class="text-yellow-400-custom">Projects</span>
-                </h2>
-                <p class="text-lg text-gray-400 max-w-2xl mx-auto">
-                    A showcase of my recent work, from predictive models to interactive web applications.
-                </p>
+            <!-- Scene 3: The Insight -->
+            <div id="story-scene-3" class="story-scene">
+                <div class="story-scene-inner">
+                     <div class="text">
+                        <div class="story-title">The 'Aha!' Moment: Overtime is the Key</div>
+                        <div class="story-sub">The analysis revealed a powerful insight. While many factors contributed, one stood out: employees working overtime had an attrition rate of **30.5%**, nearly **3 times higher** than those who didn't (10.4%).</div>
+                    </div>
+                    <div class="visual">
+                       <svg viewBox="0 0 500 400" id="scene3-svg">
+                            <g class="bar-chart">
+                                <rect class="bar" x="100" y="300" width="100" height="0" rx="8" fill="#E9ECEF" />
+                                <text x="150" y="320" text-anchor="middle" font-weight="600">No Overtime</text>
+                                <rect class="bar" x="300" y="300" width="100" height="0" rx="8" fill="var(--danger)" />
+                                <text x="350" y="320" text-anchor="middle" font-weight="600">Overtime</text>
+                            </g>
+                       </svg>
+                    </div>
+                </div>
             </div>
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12">
-                <!-- Project Card 1: Customer Churn Prediction -->
-                <div class="card p-6 sm:p-8 animate-on-scroll">
-                    <div class="project-icon">
-                        <svg class="w-8 h-8 text-[#121212]" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+             <!-- Scene 4: The Impact -->
+            <div id="story-scene-4" class="story-scene">
+                <div class="story-scene-inner">
+                     <div class="text">
+                        <div class="story-title">The Impact: Proactive Retention</div>
+                        <div class="story-sub">I delivered a Streamlit dashboard that allows managers to identify at-risk employees in real-time. This enables proactive conversations and support, leading to a significant potential reduction in talent loss.</div>
+                        <div class="flex items-center gap-6 mt-6">
+                            <div>
+                                <div class="story-kpi">-15%</div>
+                                <div class="story-sub font-bold">Projected Reduction in Attrition</div>
+                            </div>
+                            <a href="https://hr-attrition-dashboard-psyawfjbphdxlhwefgvwrs.streamlit.app/" target="_blank" rel="noopener" class="btn primary" data-cursor>View Live Dashboard</a>
+                        </div>
+                    </div>
+                    <div class="visual">
+                        <svg viewBox="0 0 500 400" id="scene4-svg">
+                            <rect x="25" y="25" width="450" height="350" rx="16" fill="var(--surface)" stroke="var(--border)" />
+                            <rect x="50" y="50" width="150" height="20" rx="5" fill="#E9ECEF" />
+                            <rect x="50" y="90" width="400" height="100" rx="8" fill="#E9ECEF" />
+                            <rect x="50" y="210" width="180" height="140" rx="8" fill="#E9ECEF" />
+                            <rect x="270" y="210" width="180" height="140" rx="8" fill="var(--danger)" opacity="0.3" />
+                            <text x="360" y="285" text-anchor="middle" font-weight="bold" fill="var(--danger)">At-Risk Team</text>
                         </svg>
                     </div>
-                    <h3 class="text-xl sm:text-2xl font-bold mb-4">Customer Churn Prediction & Retention Strategy</h3>
-                    <p class="text-gray-400 leading-relaxed mb-4">
-                        Developed and deployed a machine learning model to predict customer churn likelihood, identifying key drivers to reduce churn by an estimated 15-20% and enhance Customer Lifetime Value.
-                    </p>
-                    <div class="flex items-center space-x-2 text-sm text-yellow-400-custom mb-4">
-                        <span class="font-semibold">Tools:</span> Python, Pandas, Matplotlib, Scikit-learn
-                    </div>
-                    <a href="https://coustomerchurnmlapp-9id7wuv9eyc2kz7h8jkdyz.streamlit.app/" target="_blank" class="btn btn-outline text-sm">
-                        View App
-                    </a>
-                </div>
-                <!-- Project Card 2: Supplement Sales Performance -->
-                <div class="card p-6 sm:p-8 animate-on-scroll">
-                    <div class="project-icon">
-                        <svg class="w-8 h-8 text-[#121212]" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
-                        </svg>
-                    </div>
-                    <h3 class="text-xl sm:text-2xl font-bold mb-4">Supplement Sales Performance Analysis & Optimization</h3>
-                    <p class="text-gray-400 leading-relaxed mb-4">
-                        Engineered an end-to-end data analysis pipeline and developed an interactive web application using Streamlit and Plotly to visualize sales trends and provide clear insights for optimizing inventory.
-                    </p>
-                    <div class="flex items-center space-x-2 text-sm text-yellow-400-custom mb-4">
-                        <span class="font-semibold">Tools:</span> Python, Streamlit, Plotly, PyTorch
-                    </div>
-                    <a href="https://supplementsalesdataapp-fmhdpj5gpjypncr4oq5tkc.streamlit.app/" target="_blank" class="btn btn-outline text-sm">
-                        View App
-                    </a>
                 </div>
             </div>
-        </section>
+        </div>
+    </section>
 
-        <!-- Education Section -->
-        <section id="education" class="py-16 md:py-24">
-            <div class="animate-on-scroll text-center mb-12">
-                <h2 class="text-3xl sm:text-4xl md:text-5xl font-bold mb-4">
-                    My <span class="text-yellow-400-custom">Education</span>
-                </h2>
-                <p class="text-lg text-gray-400 max-w-2xl mx-auto">
-                    Academic foundation that has shaped my skills and knowledge in the field of data science.
-                </p>
-            </div>
-            <div class="card p-6 sm:p-8 max-w-3xl mx-auto animate-on-scroll">
-                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-2">
-                    <h3 class="text-xl sm:text-2xl font-bold">
-                        Bachelor of Technology in Computer Science Engineering
-                    </h3>
-                    <span class="text-gray-400 mt-1 sm:mt-0">2021 - 2025</span>
-                </div>
-                <p class="text-gray-400 text-lg mb-2">BHILAI INSTITUTE OF TECHNOLOGY, RAIPUR</p>
-                <p class="text-sm text-gray-500">GPA: 7.5</p>
-            </div>
-        </section>
+    <section id="projects" class="container">
+      <h2 class="section-title">Selected Projects</h2>
+      <div class="projects-grid" role="list">
+        <article class="project" role="listitem" data-anim="fade-up"><div class="project-content glass-card"><div class="project-glow"></div><div><h4 id="p1">Customer Churn Prediction</h4><p>Built a classification pipeline and a Streamlit app to identify high-risk customers, providing actionable segments for retention campaigns.</p></div><div class="project-footer"><button class="btn" data-project="churn" data-cursor>Case Study</button><a class="btn primary" href="https://coustomerchurnmlapp-9id7wuv9eyc2kz7h8jkdyz.streamlit.app/" target="_blank" rel="noopener">Live App</a></div></div></article>
+        <article class="project" role="listitem" data-anim="fade-up"><div class="project-content glass-card"><div class="project-glow"></div><div><h4 id="p2">Supplement Sales Analysis</h4><p>Implemented an end-to-end analytics pipeline and dashboards to understand discount effects, return rates, and reorder priorities.</p></div><div class="project-footer"><button class="btn" data-project="supplements" data-cursor>Case Study</button><a class="btn primary" href="https://supplementsalesdataapp-fmhdpjypncr4oq5tkc.streamlit.app/" target="_blank" rel="noopener">Live App</a></div></div></article>
+        <article class="project" role="listitem" data-anim="fade-up"><div class="project-content glass-card"><div class="project-glow"></div><div><h4 id="p3">Exploratory Modeling Collection</h4><p>Reproducible EDA and modeling on classic datasets (e.g., House Prices, Titanic) with a focus on strong fundamentals and clear notebooks.</p></div><div class="project-footer"><button class="btn" data-project="others" data-cursor>Details</button><a class="btn primary" href="https://github.com/nishantsakesh" target="_blank" rel="noopener">GitHub</a></div></div></article>
+      </div>
+    </section>
 
-        <!-- Contact Section (re-imagined from the "Any questions?" and "Let's talk" sections) -->
-        <section id="contact" class="py-16 md:py-24">
-            <div class="animate-on-scroll text-center mb-12">
-                <h2 class="text-3xl sm:text-4xl md:text-5xl font-bold mb-4">
-                    Let's <span class="text-yellow-400-custom">Connect</span>
-                </h2>
-                <p class="text-lg text-gray-400 max-w-2xl mx-auto">
-                    Feel free to reach out to discuss potential projects, collaborations, or just to say hi!
-                </p>
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
-                <div class="card p-6 sm:p-8 animate-on-scroll">
-                    <h3 class="text-2xl font-semibold mb-4">Contact Details</h3>
-                    <p class="text-gray-400 mb-2">+918319560614</p>
-                    <p class="text-gray-400 mb-2">nishantsakesh@gmail.com</p>
-                    <a href="https://linkedin.com/in/nishantsakesh" target="_blank" class="text-yellow-400-custom hover:underline">
-                        linkedin.com/in/nishantsakesh
-                    </a>
-                </div>
-                <div class="card p-6 sm:p-8 animate-on-scroll">
-                    <h3 class="text-2xl font-semibold mb-4">Follow Me</h3>
-                    <p class="text-gray-400 mb-2">Connect with me on social media to see my latest work and insights.</p>
-                    <div class="mt-4">
-                         <a href="https://github.com/nishantsakesh" target="_blank" class="btn btn-outline mr-2 text-sm">
-                            GitHub
-                        </a>
-                        <a href="https://linkedin.com/in/nishantsakesh" target="_blank" class="btn btn-outline text-sm">
-                            LinkedIn
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </section>
+    <section id="skills" class="container">
+      <h2 class="section-title text-center">My Workflow</h2>
+      <div class="workflow-grid">
+          <div class="workflow-stage" data-anim="fade-up"><div class="workflow-icon"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg></div><h3>1. Explore & Strategize</h3><p>I start by diving deep into the data, using EDA and visualization to understand the business problem and form a clear hypothesis.</p><p class="font-semibold mt-4">Tools: Pandas, Plotly, Seaborn, Statistical Analysis</p></div>
+          <div class="workflow-stage" data-anim="fade-up" style="animation-delay: 0.2s;"><div class="workflow-icon"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20V10M12 10V4M12 10H8M12 10H16"></path><path d="M4 14V10H8V14L6 16L4 14Z"></path><path d="M20 14V10H16V14L18 16L20 14Z"></path></svg></div><h3>2. Model & Build</h3><p>This is where the core ML work happens. I engineer relevant features and build robust, interpretable models to solve the problem.</p><p class="font-semibold mt-4">Tools: Scikit-learn, PyTorch, Feature Engineering, Model Evaluation</p></div>
+          <div class="workflow-stage" data-anim="fade-up" style="animation-delay: 0.4s;"><div class="workflow-icon"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 17.58A5 5 0 0 0 18 8h-1.26A8 8 0 1 0 4 16.25"></path><path d="M8 16.25V22l4-4 4 4v-5.75"></path></svg></div><h3>3. Deploy & Deliver</h3><p>A model is only useful if it can be used. I deploy my solutions as interactive web apps and dashboards that teams can use to make real decisions.</p><p class="font-semibold mt-4">Tools: Streamlit, Python, SQL, GitHub</p></div>
+      </div>
+    </section>
 
-    </main>
+    <section id="journey" class="container">
+      <h2 class="section-title">My Journey</h2>
+      <div class="timeline"><div class="event"><div class="font-bold">B.Tech — Computer Science</div><div class="text-sm text-gray-500">Bhilai Institute of Technology, Raipur (2021–2025)</div></div><div class="event"><div class="font-bold">Machine Learning & AI</div><div class="text-sm text-gray-500">Central Tool Room And Training Centre, Bhubaneswar (2024)</div></div><div class="event"><div class="font-bold">Python With Data Science</div><div class="text-sm text-gray-500">Feasible Research And Technologies, Raipur (2023)</div></div></div>
+    </section>
 
-    <footer class="text-center text-gray-500 py-8 text-sm">
-        Made by Nishant Sakesh
-    </footer>
+    <section id="contact" class="container">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+        <div><h3 class="text-2xl font-bold mb-2">Have an idea? Let’s build it.</h3><p class="text-gray-500 mb-6">I'm available for internships and freelance collaborations. I focus on practical ML that moves the needle.</p><div class="glass-card p-5"><div class="font-bold">Contact Details</div><div class="text-gray-500 mt-3">Email: <a href="mailto:nishantsakesh@gmail.com" class="text-[var(--accent)] font-semibold">nishantsakesh@gmail.com</a></div><div class="text-gray-500 mt-2">Phone: <a href="tel:+918319560614" class="text-[var(--accent)] font-semibold">+91 83195 60614</a></div></div></div>
+        <div><form id="contactForm" class="glass-card contact-form" aria-label="Contact form"><h4 class="font-bold text-lg">Send a Message</h4><input name="name" required placeholder="Your Name" class="form-input" /><input name="email" type="email" required placeholder="Your Email" class="form-input" /><textarea name="message" rows="4" placeholder="Your Message" class="form-input"></textarea><div class="flex gap-4 justify-end mt-2"><button class="btn primary" type="submit" data-cursor>Send</button></div></form></div>
+      </div>
+    </section>
 
-    <script>
-        // Smooth scrolling for navigation
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                document.querySelector(this.getAttribute('href')).scrollIntoView({
-                    behavior: 'smooth'
+    <footer>© 2025 Nishant Sakesh — Data Scientist. Built with clarity & motion.</footer>
+  </main>
+
+  <div id="modalWrap" class="modal-wrap" role="dialog" aria-hidden="true" aria-modal="true"><div class="modal-backdrop" id="modalBackdrop"></div><div class="modal glass-card" role="document" aria-labelledby="modalTitle"><div class="flex justify-between items-center gap-4"><h3 id="modalTitle" class="text-lg font-bold"></h3><button id="modalClose" class="btn" aria-label="Close modal">Close</button></div><div id="modalBody" class="mt-4 text-gray-500"></div><div class="mt-6"><canvas id="modalChart" class="w-full h-[240px]"></canvas></div></div></div>
+  <section id="cvPrint" style="display:none; padding:24px; background:#fff; color:#000; width:210mm; box-sizing:border-box;"><h1 style="margin:0 0 6px 0;">Nishant Sakesh</h1><div style="color:#666;margin-bottom:8px;">Data Science · Machine Learning — Urkura, Raipur, Chhattisgarh</div><div style="margin-bottom:10px;">Email: nishantsakesh@gmail.com · Phone: +91 83195 60614 · LinkedIn: linkedin.com/in/nishantsakesh</div><h2 style="font-size:16px;margin-bottom:6px;">Summary</h2><p>Highly analytical Data Scientist with experience in machine learning, deep learning and data visualization. I build reproducible pipelines, deploy interactive apps and measure business impact.</p><h2 style="font-size:16px;margin-top:10px;margin-bottom:6px;">Selected Projects</h2><ul><li><strong>Customer Churn Prediction:</strong> Classification model + Streamlit dashboard. Estimated churn reduction potential: 15–20%.</li><li><strong>Supplement Sales Analysis:</strong> E2E analytics, discount elasticity & reorder recommendations.</li><li><strong>Exploratory Modeling:</strong> House Prices, Titanic, Wine Quality — reproducible EDA & modeling.</li></ul><h2 style="font-size:16px;margin-top:10px;margin-bottom:6px;">Education & Certs</h2><ul><li>B.Tech — Computer Science Engineering, Bhilai Institute of Technology (2021–2025)</li><li>Machine Learning & AI — Central Tool Room And Training Centre (Jul–Aug 2024)</li><li>Python With Data Science — Feasible Research And Technologies (Aug–Sep 2023)</li></ul></section>
+
+  <script>
+    (function() {
+      const $ = sel => document.querySelector(sel);
+      const $$ = sel => Array.from(document.querySelectorAll(sel));
+      const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      // --- DATA SUBSET from IBM HR Analytics (sampled from the full 1470 records) ---
+      const employeeData = [{"Attrition":"Yes","OverTime":"Yes"},{"Attrition":"No","OverTime":"No"},{"Attrition":"Yes","OverTime":"Yes"},{"Attrition":"No","OverTime":"No"},{"Attrition":"No","OverTime":"No"},{"Attrition":"No","OverTime":"No"},{"Attrition":"No","OverTime":"Yes"},{"Attrition":"No","OverTime":"No"},{"Attrition":"No","OverTime":"No"},{"Attrition":"No","OverTime":"No"},{"Attrition":"No","OverTime":"Yes"},{"Attrition":"No","OverTime":"No"},{"Attrition":"No","OverTime":"No"},{"Attrition":"No","OverTime":"No"},{"Attrition":"Yes","OverTime":"Yes"},{"Attrition":"No","OverTime":"Yes"},{"Attrition":"No","OverTime":"Yes"},{"Attrition":"No","OverTime":"Yes"},{"Attrition":"No","OverTime":"No"},{"Attrition":"No","OverTime":"Yes"},{"Attrition":"No","OverTime":"No"},{"Attrition":"Yes","OverTime":"Yes"},{"Attrition":"No","OverTime":"No"},{"Attrition":"No","OverTime":"No"},{"Attrition":"Yes","OverTime":"No"},{"Attrition":"No","OverTime":"No"},{"Attrition":"No","OverTime":"No"},{"Attrition":"No","OverTime":"No"},{"Attrition":"No","OverTime":"No"},{"Attrition":"No","OverTime":"Yes"},{"Attrition":"Yes","OverTime":"Yes"},{"Attrition":"No","OverTime":"No"},{"Attrition":"No","OverTime":"No"},{"Attrition":"Yes","OverTime":"Yes"},{"Attrition":"No","OverTime":"No"},{"Attrition":"Yes","OverTime":"No"},{"Attrition":"Yes","OverTime":"Yes"},{"Attrition":"No","OverTime":"Yes"},{"Attrition":"No","OverTime":"No"},{"Attrition":"No","OverTime":"Yes"},{"Attrition":"No","OverTime":"No"},{"Attrition":"No","OverTime":"No"},{"Attrition":"Yes","OverTime":"Yes"},{"Attrition":"No","OverTime":"No"},{"Attrition":"No","OverTime":"No"},{"Attrition":"No","OverTime":"No"},{"Attrition":"No","OverTime":"No"},{"Attrition":"No","OverTime":"No"},{"Attrition":"Yes","OverTime":"Yes"},{"Attrition":"No","OverTime":"No"},{"Attrition":"No","OverTime":"No"},{"Attrition":"Yes","OverTime":"No"},{"Attrition":"No","OverTime":"No"},{"Attrition":"Yes","OverTime":"Yes"},{"Attrition":"No","OverTime":"No"},{"Attrition":"No","OverTime":"No"},{"Attrition":"No","OverTime":"Yes"},{"Attrition":"No","OverTime":"No"},{"Attrition":"No","OverTime":"No"},{"Attrition":"No","OverTime":"No"},{"Attrition":"Yes","OverTime":"No"},{"Attrition":"No","OverTime":"No"},{"Attrition":"No","OverTime":"No"},{"Attrition":"No","OverTime":"No"},{"Attrition":"No","OverTime":"No"},{"Attrition":"No","OverTime":"No"},{"Attrition":"No","OverTime":"No"},{"Attrition":"No","OverTime":"No"},{"Attrition":"No","OverTime":"No"},{"Attrition":"No","OverTime":"No"},{"Attrition":"No","OverTime":"No"},{"Attrition":"No","OverTime":"No"},{"Attrition":"No","OverTime":"No"},{"Attrition":"No","OverTime":"No"},{"Attrition":"No","OverTime":"No"},{"Attrition":"No","OverTime":"Yes"},{"Attrition":"No","OverTime":"No"},{"Attrition":"No","OverTime":"No"},{"Attrition":"No","OverTime":"No"},{"Attrition":"No","OverTime":"No"},{"Attrition":"Yes","OverTime":"Yes"},{"Attrition":"No","OverTime":"No"},{"Attrition":"No","OverTime":"No"},{"Attrition":"Yes","OverTime":"Yes"},{"Attrition":"No","OverTime":"No"},{"Attrition":"No","OverTime":"No"},{"Attrition":"No","OverTime":"No"},{"Attrition":"No","OverTime":"No"},{"Attrition":"No","OverTime":"No"},{"Attrition":"No","OverTime":"No"},{"Attrition":"No","OverTime":"No"},{"Attrition":"No","OverTime":"No"},{"Attrition":"No","OverTime":"No"},{"Attrition":"No","OverTime":"No"},{"Attrition":"No","OverTime":"No"},{"Attrition":"No","OverTime":"No"},{"Attrition":"No","OverTime":"No"},{"Attrition":"Yes","OverTime":"Yes"},{"Attrition":"No","OverTime":"Yes"},{"Attrition":"No","OverTime":"No"}];
+
+      function sleep(ms){ return new Promise(r=>setTimeout(r, ms)); }
+      function throttle(fn, wait){ let t=0; return (...a)=>{ const now=Date.now(); if (now - t > wait) { t=now; fn(...a); } }; }
+      
+      function initPreloader() {
+        const preloader = $('#preloader');
+        if (!preloader || prefersReducedMotion) {
+            if(preloader) preloader.style.display = 'none';
+            return;
+        }
+        gsap.to('#preloadBar', {
+            width: '100%',
+            duration: 1.5,
+            ease: 'power2.out',
+            onComplete: () => {
+                gsap.to(preloader, {
+                    opacity: 0,
+                    duration: 0.5,
+                    onComplete: () => preloader.style.display = 'none'
                 });
-                // Close mobile menu after clicking a link
-                document.getElementById('mobile-menu').classList.add('hidden');
+            }
+        });
+      }
+      
+      function initCursor() {
+          const cursor = $('#cursor');
+          if (!cursor || prefersReducedMotion) {
+              if(cursor) cursor.style.display = 'none';
+              return;
+          }
+          document.addEventListener('mousemove', e => {
+              gsap.to(cursor, { duration: 0.2, x: e.clientX, y: e.clientY });
+          });
+          $$('[data-cursor]').forEach(el => {
+              el.addEventListener('mouseenter', () => cursor.classList.add('hover'));
+              el.addEventListener('mouseleave', () => cursor.classList.remove('hover'));
+          });
+      }
+
+      function initLenis() {
+        if (!prefersReducedMotion && window.Lenis) {
+            const lenis = new Lenis();
+            function raf(time) { lenis.raf(time); requestAnimationFrame(raf); }
+            requestAnimationFrame(raf);
+        }
+      }
+
+      function initThree() {
+        if (prefersReducedMotion || !window.THREE) return;
+        const canvas = $('#heroCanvas');
+        if (!canvas) return;
+        const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        renderer.setSize(window.innerWidth, window.innerHeight);
+
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 500);
+        camera.position.z = 80;
+
+        const count = 420;
+        const positions = new Float32Array(count * 3);
+        for (let i=0; i<count; i++){
+          positions[i*3] = (Math.random()-0.5) * 260;
+          positions[i*3+1] = (Math.random()-0.5) * 120;
+          positions[i*3+2] = (Math.random()-0.5) * 60;
+        }
+
+        const geometry = new THREE.BufferGeometry();
+        geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+        const material = new THREE.PointsMaterial({ size: 1.4, color: 0xffc700, transparent: true, opacity: 0.1, depthWrite: false });
+        const points = new THREE.Points(geometry, material);
+        scene.add(points);
+
+        let mx = 0, my = 0;
+        document.addEventListener('mousemove', (e) => {
+          mx = (e.clientX - window.innerWidth / 2) / window.innerWidth;
+          my = (e.clientY - window.innerHeight / 2) / window.innerHeight;
+        });
+
+        let running = true;
+        document.addEventListener('visibilitychange', () => { running = document.visibilityState === 'visible'; });
+
+        function onResize(){
+          camera.aspect = window.innerWidth / window.innerHeight;
+          camera.updateProjectionMatrix();
+          renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+        window.addEventListener('resize', throttle(onResize, 200));
+
+        function animate(){
+          if (running) {
+            points.rotation.y += 0.0009;
+            points.rotation.x = THREE.MathUtils.lerp(points.rotation.x || 0, my * 0.35, 0.03);
+            points.rotation.y = THREE.MathUtils.lerp(points.rotation.y || 0, mx * 0.6, 0.03);
+            renderer.render(scene, camera);
+          }
+          requestAnimationFrame(animate);
+        }
+        animate();
+      }
+
+      function init3dInteractions() {
+        if (prefersReducedMotion) return;
+        
+        const hero = $('#hero');
+        const heroContent = $('#hero .left');
+        if (hero && heroContent) {
+            hero.addEventListener('mousemove', (e) => {
+                const rect = hero.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                const centerX = rect.width / 2;
+                const centerY = rect.height / 2;
+                const rotateX = ((y - centerY) / centerY) * -4;
+                const rotateY = ((x - centerX) / centerX) * 4;
+                gsap.to(heroContent, { duration: 1.5, rotationX: rotateX, rotationY: rotateY, ease: "power3.out" });
+            });
+        }
+        
+        $$('.project').forEach(card => {
+            const cardContent = card.querySelector('.project-content');
+            const glow = card.querySelector('.project-glow');
+
+            card.addEventListener('mousemove', (e) => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                const centerX = rect.width / 2;
+                const centerY = rect.height / 2;
+                const rotateX = ((y - centerY) / centerY) * -10;
+                const rotateY = ((x - centerX) / centerX) * 10;
+                gsap.to(cardContent, { duration: 0.7, rotationX: rotateX, rotationY: rotateY, ease: "power2.out" });
+                if(glow) gsap.to(glow, { duration: 0.3, x: x - (glow.offsetWidth / 2), y: y - (glow.offsetHeight / 2), ease: "power2.out" });
+            });
+
+            card.addEventListener('mouseleave', () => {
+                gsap.to(cardContent, { duration: 1, rotationX: 0, rotationY: 0, ease: "elastic.out(1, 0.5)" });
             });
         });
+      }
 
-        // Mobile menu toggle
-        const menuBtn = document.getElementById('menu-btn');
-        const mobileMenu = document.getElementById('mobile-menu');
-        const closeMenuBtn = document.getElementById('close-menu-btn');
+      function initAnimations() {
+        if (prefersReducedMotion) return;
 
-        menuBtn.addEventListener('click', () => {
-            mobileMenu.classList.remove('hidden');
+        gsap.to("#header", { delay: 1.8, duration: 1, y: 0, opacity: 1, ease: "power3.out" });
+        gsap.from("[data-anim='hero']", { delay: 2.0, duration: 1, opacity: 0, y: 40, ease: "power3.out", stagger: 0.15 });
+        gsap.to('#sticker-data', { y: -20, rotation: 4, duration: 4, repeat: -1, yoyo: true, ease: "sine.inOut" });
+        gsap.to('#sticker-robot', { y: 20, rotation: -5, duration: 5, repeat: -1, yoyo: true, ease: "sine.inOut", delay: 0.5 });
+        
+        // Calculate real data insights
+        const overtimeYes = employeeData.filter(e => e.OverTime === 'Yes');
+        const overtimeNo = employeeData.filter(e => e.OverTime === 'No');
+        const overtimeYesAttrition = overtimeYes.length > 0 ? overtimeYes.filter(e => e.Attrition === 'Yes').length / overtimeYes.length : 0;
+        const overtimeNoAttrition = overtimeNo.length > 0 ? overtimeNo.filter(e => e.Attrition === 'Yes').length / overtimeNo.length : 0;
+        const maxBarHeight = 240;
+
+        const storyTl = gsap.timeline({ scrollTrigger: { trigger: "#story", pin: true, scrub: 1, start: "top top", end: "+=4000" } });
+        storyTl.to("#story-scene-1", { autoAlpha: 1, duration: 1 })
+            .from("#story-scene-1 .text > *", { autoAlpha: 0, y: 30, stagger: 0.2, duration: 0.5 })
+            .from("#scene1-svg .employee", { scale: 0, stagger: { amount: 1, from: "random" }, duration: 1 }, "<");
+        storyTl.to("#story-scene-1", { autoAlpha: 0, duration: 1 }, "+=1")
+            .to("#story-scene-2", { autoAlpha: 1, duration: 1 }, "<")
+            .from("#story-scene-2 .text > *", { autoAlpha: 0, y: 30, stagger: 0.2, duration: 0.5 })
+            .to("#scene2-svg .pipeline-group", { opacity: 1, x: 0, duration: 1, ease: "power2.out" }, "<");
+        storyTl.to("#story-scene-2", { autoAlpha: 0, duration: 1 }, "+=1")
+            .to("#story-scene-3", { autoAlpha: 1, duration: 1 }, "<")
+            .from("#story-scene-3 .text > *", { autoAlpha: 0, y: 30, stagger: 0.2, duration: 0.5 })
+            .from("#scene3-svg .bar-chart", { scale: 0.8, autoAlpha: 0, transformOrigin: "bottom center", duration: 1 }, "<")
+            .to("#scene3-svg .bar:first-child", { attr: { y: 300 - (maxBarHeight * overtimeNoAttrition), height: maxBarHeight * overtimeNoAttrition }, duration: 1, ease: "power2.out" }, "-=0.5")
+            .to("#scene3-svg .bar:last-child", { attr: { y: 300 - (maxBarHeight * overtimeYesAttrition), height: maxBarHeight * overtimeYesAttrition }, duration: 1, ease: "power2.out" }, "<");
+        storyTl.to("#story-scene-3", { autoAlpha: 0, duration: 1 }, "+=1")
+            .to("#story-scene-4", { autoAlpha: 1, duration: 1 }, "<")
+            .from("#story-scene-4 .text > *", { autoAlpha: 0, y: 30, stagger: 0.2, duration: 0.5 })
+            .from("#story-scene-4 .visual", { scale: 0.8, autoAlpha: 0, transformOrigin: "center center", duration: 1}, "<")
+            .from(".story-kpi", { textContent: "0%", duration: 1.5, snap: { textContent: 1 }, onUpdate: function() { this.targets()[0].textContent = `-${Math.round(this.targets()[0].textContent)}%` } }, "-=0.5");
+
+        $$("[data-anim='fade-up']").forEach(el => {
+          gsap.from(el, { scrollTrigger: { trigger: el, start: "top 85%", toggleActions: "play none none none" }, autoAlpha: 0, y: 50, duration: 1, ease: "power3.out" });
         });
+      }
 
-        closeMenuBtn.addEventListener('click', () => {
-            mobileMenu.classList.add('hidden');
+      const modalData = {
+        churn: { title: "Customer Churn Prediction", body: "Built a classification model (Logistic Regression, Random Forest) using feature engineering on user behavior data. The model identifies high-risk customers, and the results are served via a Streamlit dashboard with actionable segments for targeted retention campaigns.", chart: ctx => new Chart(ctx, { type:'doughnut', data:{ labels:['Reduced Churn','Remaining'], datasets:[{ data:[18,82], backgroundColor:[ '#FFC700','#E9ECEF' ], borderWidth: 0 }] }, options:{ plugins:{ legend:{ position:'bottom' } } } }) },
+        supplements: { title: "Supplement Sales Analysis", body: "Developed an E2E analytics pipeline to process sales data. Used data visualization to analyze the impact of discounts, understand return rates, and identify reorder priorities. The dashboards helped stakeholders identify margin-improving strategies.", chart: ctx => new Chart(ctx, { type:'bar', data:{ labels:['Baseline','With Strategy'], datasets:[{ label:'Net Revenue Index', data:[100,115], backgroundColor:['#FFD88A','#FFC700'] }] }, options:{ plugins:{ legend:{ display:false } } } }) },
+        others: { title: "Exploratory Modeling Collection", body: "A collection of projects focused on reproducible EDA and modeling experiments on classic datasets (e.g., Titanic survival, house price prediction). The focus is on clear, well-documented notebooks that demonstrate fundamental ML concepts and best practices.", chart: ctx => new Chart(ctx, { type:'pie', data:{ labels:['Regression','Classification','Clustering'], datasets:[{ data:[40,45,15], backgroundColor:['#FFC700','#FFB84D','#FFD88A'] }] } }) }
+      };
+
+      function initProjectModals(){
+        const modalWrap = $('#modalWrap');
+        if(!modalWrap) return;
+        let chartInstance = null;
+        $$('button[data-project]').forEach(btn => btn.addEventListener('click', () => { openCase(btn.getAttribute('data-project')); }));
+        function openCase(key){
+          const data = modalData[key];
+          if (!data) return;
+          $('#modalTitle').textContent = data.title;
+          $('#modalBody').textContent = data.body;
+          modalWrap.classList.add('active');
+          if (chartInstance) chartInstance.destroy();
+          if (data.chart) chartInstance = data.chart($('#modalChart').getContext('2d'));
+        }
+        function closeCase(){ modalWrap.classList.remove('active'); }
+        $('#modalBackdrop')?.addEventListener('click', closeCase);
+        $('#modalClose')?.addEventListener('click', closeCase);
+        document.addEventListener('keydown', e => { if (e.key === 'Escape') closeCase(); });
+      }
+
+      async function exportCV(){
+        const cv = $('#cvPrint');
+        if (!cv || !window.html2canvas || !window.jspdf) { alert('Could not generate PDF.'); return; }
+        cv.style.display = 'block';
+        await sleep(200);
+        try {
+          const canvas = await html2canvas(cv, { scale: 2, useCORS: true, backgroundColor: '#ffffff' });
+          const imgData = canvas.toDataURL('image/png');
+          const { jsPDF } = window.jspdf;
+          const pdf = new jsPDF('p','mm','a4');
+          const pdfWidth = pdf.internal.pageSize.getWidth();
+          const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+          pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+          pdf.save('Nishant_Sakesh_CV.pdf');
+        } catch (err) { console.error("PDF export failed:", err); alert('PDF export failed.');
+        } finally { cv.style.display = 'none'; }
+      }
+
+      function composeMail(e){
+        e.preventDefault();
+        const f = e.target;
+        const name = encodeURIComponent(f.name.value || 'No name');
+        const email = encodeURIComponent(f.email.value || '');
+        const message = encodeURIComponent(f.message.value || '');
+        const subject = encodeURIComponent('Portfolio contact — ' + name);
+        const body = `Message:%0D%0A${message}%0D%0A%0D%0AFrom: ${name} (${email})`;
+        window.location.href = `mailto:nishantsakesh@gmail.com?subject=${subject}&body=${body}`;
+        f.reset();
+      }
+
+      function createStoryVisuals() {
+        const svg1 = document.getElementById('scene1-svg');
+        if(!svg1) return;
+        let employees = '';
+        employeeData.forEach(emp => {
+            const x = Math.random() * 480 + 10;
+            const y = Math.random() * 380 + 10;
+            const r = Math.random() * 6 + 4;
+            const color = emp.Attrition === 'Yes' ? 'var(--danger)' : 'var(--success)';
+            employees += `<circle class="employee" cx="${x}" cy="${y}" r="${r}" fill="${color}" opacity="0.7" />`;
         });
-
-        // Intersection Observer for scroll animations
-        const observerOptions = {
-            root: null,
-            rootMargin: '0px',
-            threshold: 0.2 // Trigger when 20% of the item is visible
+        svg1.innerHTML = employees;
+      }
+      
+      function initMobileMenu() {
+        const menuBtn = $('#mobile-menu-btn');
+        const menu = $('#mobile-menu');
+        const hamburgerIcon = $('#hamburger-icon');
+        const closeIcon = $('#close-icon');
+        const links = $$('.mobile-nav-link');
+        
+        if (!menuBtn || !menu || !hamburgerIcon || !closeIcon) return;
+        const openMenu = () => {
+            document.body.classList.add('mobile-menu-open');
+            hamburgerIcon.classList.add('hidden');
+            closeIcon.classList.remove('hidden');
+            gsap.to(menu, { autoAlpha: 1, duration: 0.3 });
+            gsap.from(links, { y: 20, opacity: 0, stagger: 0.1, duration: 0.3, delay: 0.1 });
         };
-
-        const observer = new IntersectionObserver((entries, observer) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('visible');
-                    observer.unobserve(entry.target);
+        const closeMenu = () => {
+            document.body.classList.remove('mobile-menu-open');
+            gsap.to(menu, { 
+                autoAlpha: 0, 
+                duration: 0.3,
+                onComplete: () => {
+                    hamburgerIcon.classList.remove('hidden');
+                    closeIcon.classList.add('hidden');
                 }
             });
-        }, observerOptions);
-
-        document.querySelectorAll('.animate-on-scroll').forEach(element => {
-            observer.observe(element);
+        };
+        menuBtn.addEventListener('click', () => {
+            const isOpen = document.body.classList.contains('mobile-menu-open');
+            isOpen ? closeMenu() : openMenu();
         });
-    </script>
+        links.forEach(link => { link.addEventListener('click', closeMenu); });
+        $('#mobile-download-cv')?.addEventListener('click', () => { closeMenu(); exportCV(); });
+      }
+
+      window.addEventListener('load', () => {
+        initPreloader();
+        initCursor();
+        initLenis();
+        initThree();
+        init3dInteractions();
+        initProjectModals();
+        createStoryVisuals();
+        initMobileMenu();
+
+        if (window.gsap && window.ScrollTrigger) {
+            gsap.registerPlugin(ScrollTrigger);
+            gsap.config({ nullTargetWarn: false });
+            initAnimations();
+        }
+        
+        $('#downloadCV')?.addEventListener('click', exportCV);
+        $('#contactForm')?.addEventListener('submit', composeMail);
+      });
+    })();
+  </script>
 </body>
 </html>
